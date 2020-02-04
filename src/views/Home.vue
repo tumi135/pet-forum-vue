@@ -1,18 +1,26 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <announcement-list/>
+    <my-swiper type="0" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
-  name: "home",
+  data(){
+    return {
+      from: {
+        info: "wode"
+      }
+    }
+  },
+  watch:{
+  },
   components: {
-    HelloWorld
+    'announcement-list':() => import('../components/home/announcementList'),
+    'my-swiper':() => import('../components/swipe')
   }
 };
 </script>
