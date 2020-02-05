@@ -2,6 +2,11 @@
   <div class="home">
     <announcement-list/>
     <my-swiper type="0" />
+    <funny-img/>
+    <div class="tuijian">
+      <header>推荐</header>
+      <article-list :article-list-info="listInfo"/>
+    </div>
   </div>
 </template>
 
@@ -11,6 +16,13 @@
 export default {
   data(){
     return {
+      listInfo: {
+        page: 1,
+        perpage: 10,
+        type_id: null,
+        online: 0,
+        order: "tuijian"
+      },
       from: {
         info: "wode"
       }
@@ -20,7 +32,19 @@ export default {
   },
   components: {
     'announcement-list':() => import('../components/home/announcementList'),
-    'my-swiper':() => import('../components/swipe')
+    'my-swiper':() => import('../components/swipe'),
+    'funny-img':() => import('../components/home/funnyImg'),
+    'article-list':() => import('../components/articleList'),
   }
 };
 </script>
+<style scoped>
+.tuijian{
+  
+}
+header{
+    padding: 5px;
+    font-size: 18px;
+    background: #fff;
+  }
+</style>

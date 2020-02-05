@@ -13,7 +13,7 @@
                 'http://cd7.yesapi.net/C6FB2E902F9FDA74101B4887AF935333_20200204165338_dfdd6e64f94f1ee17d7993ef417a1e09.jpeg'
             "
           />
-          <span class="swiper-title">{{ item.title }}</span>
+          <span class="swiper-title" v-if="item.title">{{ item.title }}</span>
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -42,7 +42,6 @@ export default {
           this.$message.error("数据获取失败");
           return "轮播图获取失败";
         });
-      console.log(data);
       this.swiper = data.data.list || [
           { id: "", title: data.data.err_msg }
         ] || [{ id: "", title: data }];
@@ -61,6 +60,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/css/base.scss';
 .announcement-lit {
   margin-bottom: 10px;
   span {
@@ -80,10 +80,7 @@ export default {
         text-align: center;
         background: rgba(0, 0, 0, 0.5);
         color: #fff;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        z-index: 99;
+        @include one-line-ellipsis;
       }
       img{
         width: 100%;

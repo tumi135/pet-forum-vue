@@ -11,3 +11,9 @@ $highlight-color: #FFA500;
 /* .slide-fade-leave-active for below version 2.1.8 */ {
   opacity: 0;
 }
+
+@mixin one-line-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

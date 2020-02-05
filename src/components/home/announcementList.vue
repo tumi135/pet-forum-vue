@@ -39,7 +39,6 @@ export default {
           this.$message.error("数据获取失败");
           return "公告获取失败";
         });
-        console.log(data)
         this.announcementLit = data.data.list || [{id:"",title:data.data.err_msg}] || [{id:"",title:data}]
     },
     toLink (item){
@@ -61,6 +60,8 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px;
+  background: #fff;
+  margin-bottom: 5px;
   span {
     width: 60px;
   }
