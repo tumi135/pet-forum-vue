@@ -86,6 +86,14 @@ const api = {
       token: true
     });
   },
+  //批量获取会员信息
+  userMultiProfile: (uuids) => {
+    // console.log(uuids)
+    return axios.post("/", {
+      s: "App.User.MultiProfile",
+      uuids: uuids.join(",")
+    });
+  },
   //获取会员列表接口
   userGetList: (page, perpage) => {
     return axios.post("/", {
@@ -944,7 +952,7 @@ const api = {
   },
   //点赞分页查询列表数据接口
   praiseFreeQuery: (page, perpage) => {
-    let where = ["id>0", "userId=" + store.state.uuid];
+    let where = ["id>0", "userId='" + store.state.uuid + "'"];
     return axios.post("/", {
       s: "App.Table.FreeQuery",
       model_name: "yesapi_praise",

@@ -6,7 +6,7 @@
         <li class="funny-img-item"
           v-for="(item, index) in swiper"
           :key="item.id"
-          @click="toLink(item, index)"
+          @click="toImg(item, index)"
         >
           <van-image
           class="my-img"
@@ -53,7 +53,7 @@ export default {
         })
       }
     },
-    toLink(item, index) {
+    toImg(item, index) {
       if (item.image_link) {
         ImagePreview({
           images: this.imagePreview,

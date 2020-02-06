@@ -61,8 +61,8 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/css/base.scss';
 .vueview {
-  width: 100vw;
-  height: 100vh;
+  // width: 100vw;
+  // height: 100vh;
   // background: #ff8080;
 }
 </style>

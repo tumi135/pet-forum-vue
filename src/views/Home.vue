@@ -4,8 +4,8 @@
     <my-swiper type="0" />
     <funny-img/>
     <div class="tuijian">
-      <header>推荐</header>
-      <article-list :article-list-info="listInfo"/>
+      <header class="van-hairline--bottom">推荐</header>
+      <article-list :article-list-info.sync="listInfo"/>
     </div>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
     return {
       listInfo: {
         page: 1,
-        perpage: 10,
+        perpage: 5,
         type_id: null,
         online: 0,
         order: "tuijian"
