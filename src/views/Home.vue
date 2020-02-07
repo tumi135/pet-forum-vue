@@ -28,6 +28,9 @@ export default {
       }
     }
   },
+  created(){
+    console.log("aaa")
+  },
   watch:{
   },
   components: {

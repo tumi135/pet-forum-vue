@@ -8,7 +8,7 @@
       :immediate-check="false"
       finished-text="没有更多了"
     >
-      <article-item v-for="item in articleList" :key="item.id" :article-item="item"/>
+      <article-item v-for="(item,index) in articleList" :key="item.id" @changePriceSon="changePriceFater" :article-item="item" :item-index="index"/>
     </van-list>
   </div>
 </template>
@@ -27,11 +27,10 @@ export default {
   },
   created() {
     this.init();
-    this.getPraise()
+    this.getPraise();
   },
   methods: {
     async init() {
-      console.log(this.articleListInfo.page)
       let data = await this.$api
         .articleFreeQuery(...Object.values(this.articleListInfo))
         .catch(err => {
@@ -69,7 +68,6 @@ export default {
       }
       this.articleList = this.articleList.concat(newData);
       this.loading = false;
-      console.log(this.articleList)
     },
     onLoad() {
       let newInfo = JSON.parse(JSON.stringify(this.articleListInfo));
@@ -86,7 +84,16 @@ export default {
         this.myPraise = dataArry.map(item => {
           return item.articleId
         })
-        console.log(this.myPraise)
+    },
+    changePriceFater(val,index){
+      let num;
+      if(val){
+        num = this.articleList[index].praise_num + 1
+      }else{
+        num = this.articleList[index].praise_num - 1
+      }
+      this.$set(this.articleList[index], `praise`, val)
+      this.$set(this.articleList[index], `praise_num`, num)
     }
   },
   watch: {

@@ -1,8 +1,13 @@
 <template>
   <div>
-    <transition name="slide-fade" mode="out-in">
-      <router-view class="vueview" />
-    </transition>
+    <!-- <transition name="slide-fade" mode="out-in"> -->
+      <!-- <keep-alive> -->
+        <router-view class="vueview" />
+      <!-- </keep-alive> -->
+    <!-- </transition> -->
+    <!-- <transition name="slide-fade" mode="out-in"> -->
+      <!-- <router-view v-if="!$route.meta.keepAlive" /> -->
+    <!-- </transition> -->
     <van-tabbar route active-color="#FFA500" safe-area-inset-bottom>
       <van-tabbar-item to="/home">
         <span>首页</span>

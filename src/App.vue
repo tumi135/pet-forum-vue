@@ -1,17 +1,21 @@
 <template>
   <div id="app">
-    <router-view />
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive" />
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive" />
+    <!-- <router-view /> -->
   </div>
 </template>
 
 <script>
 export default {
-  name: "App"
+  name: 'App'
 };
 </script>
 
 <style>
-html{
+html {
   background: #e7e7e7;
 }
 /* #app{

@@ -935,7 +935,7 @@ const api = {
         s: "App.Table.CheckCreateOrUpdate",
         model_name: "yesapi_praise",
         data: data,
-        check_field: "articleId, userId"
+        check_field: "articleId,userId"
       });
     }
 
@@ -948,7 +948,13 @@ const api = {
         change_value: 1
       });
     }
-    return axios.all([changePraise(), changeArticle()]);
+    return axios.all([changePraise(), changeArticle()]).then(axios.spread(function (acct) {
+      if(acct.data.err_code == 0){
+        return "success"
+      }else {
+        return "err"
+      }
+    }));
   },
   //点赞分页查询列表数据接口
   praiseFreeQuery: (page, perpage) => {
@@ -969,7 +975,7 @@ const api = {
     }
 
     function deletePraise() {
-      let where = ["articleId=" + articleId, "userId=" + store.state.uuid];
+      let where = ["articleId=" + articleId, "userId='" + store.state.uuid + "'"];
       return axios.post("/", {
         s: "App.Table.FreeDelete",
         model_name: "yesapi_praise",
@@ -987,7 +993,13 @@ const api = {
         change_value: -1
       });
     }
-    return axios.all([deletePraise(), changeArticle()]);
+    return axios.all([deletePraise(), changeArticle()]).then(axios.spread(function (acct) {
+      if(acct.data.err_code == 0){
+        return "success"
+      }else {
+        return "err"
+      }
+    }));;
   }
 };
 
