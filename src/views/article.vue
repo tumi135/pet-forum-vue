@@ -8,73 +8,242 @@
     />
     <article-item
       @changePriceSon="changePriceFater"
-      :article-item="article"
+      :article-item="articleItem"
+      :comment-show.sync="commentOpen"
       type="article"
     />
-    <van-list
-      :offset="100"
-      @load="onLoad"
-      v-model="loading"
-      :finished="finished"
-      :immediate-check="false"
-      finished-text="没有更多了"
-    ></van-list>
-    <button v-show="commentOpen">hhhhh</button>
+    <div class="list">
+      <p>评论列表</p>
+      <van-list
+        class="commentList"
+        :offset="100"
+        @load="initCommentList"
+        v-model="loading"
+        :finished="finished"
+        :immediate-check="false"
+        finished-text="没有更多了"
+      >
+        <outside-comment
+          v-for="item in commentList"
+          :key="item.id + 'comment'"
+          :comment-item="item"
+        ></outside-comment>
+      </van-list>
+    </div>
+    <div class="footer van-hairline--top">
+      <van-button @click="commentOpen = true">
+        <van-icon name="chat-o" />评论
+      </van-button>
+      <van-button @click="changePraise">
+        <van-icon v-if="articleItem.praise" name="good-job" color="#FFA500" />
+        <van-icon v-else name="good-job-o" />
+        点赞
+      </van-button>
+    </div>
+    <write-comment
+      :comment-show.sync="commentOpen"
+      :reply-tid="articleId"
+    ></write-comment>
   </div>
 </template>
 
 <script>
-import { List, NavBar } from 'vant';
-import { mapState } from 'vuex';
+import { List, NavBar, Button } from "vant";
+import { mapState } from "vuex";
+import { changePraise } from "../mixins/changePraise";
 export default {
-  name: '',
+  mixins: [changePraise],
   data() {
     return {
       articleId: null,
-      article: {},
+      articleItem: {},
       loading: false,
       finished: false,
-      commentOpen: false
+      commentOpen: false,
+      commentList: [],
+      page: 1,
+      perpage: 5
     };
   },
   created() {
     this.articleId = this.$route.query.article_id;
-    this.commentOpen = this.$route.query.comment == "true" ? true : false
+    this.commentOpen =
+      this.$route.query.comment && this.$route.query.comment == "true"
+        ? true
+        : false;
     this.initArticle();
+    this.initCommentList();
   },
   methods: {
-    initArticle() {
+    async initArticle() {
       if (this.articleId == this.clickArticle.id) {
-        this.article = this.clickArticle;
+        this.articleItem = this.clickArticle;
+        return;
       }
+      let data = await this.$api.getArticle(this.articleId).catch(err => {
+        console.log(err);
+        this.$message.error("数据获取失败");
+        return "文章获取失败";
+      });
+      this.condonAvatarAndPraise(data.data.data); //
+    },
+    //获取评论列表
+    async initCommentList() {
+      console.log("aaa")
+      if(this.loading){
+        return
+      }
+      this.loading = true
+      let data = await this.$api
+        .commentFreeQuery(this.page, this.perpage, this.articleId)
+        .catch(err => {
+          console.log(err);
+          this.$message.error("数据获取失败");
+          return "评论获取失败";
+        });
+        this.loading = false
+      let newData = data.data.list || [];
+      if (newData.length < this.perpage) {
+        this.finished = true;
+      }
+      if (data.data.list) {
+        this.page += 1;
+        let uuids = data.data.list.map(item => {
+          return item.uid;
+        });
+        this.condonAvatar(uuids, newData);
+      }
+    },
+    //连接文章的头像及点赞
+    async condonAvatarAndPraise(thisArticle) {
+      if (thisArticle == "文章获取失败") {
+        return;
+      }
+      let data = await this.$api
+        .praiseFreeQuery(1, 500, this.articleId)
+        .catch(err => {
+          console.log(err);
+          this.$message.error("数据获取失败");
+          return "获取失败";
+        });
+      let data2 = await this.$api
+        .userMultiProfile([thisArticle.user_id])
+        .catch(err => {
+          console.log(err);
+          this.$message.error("数据获取失败");
+          return "获取失败";
+        });
+      if (data.data.list.length >= 1) {
+        thisArticle.praise = true;
+      } else {
+        thisArticle.praise = false;
+      }
+      if (data2.data.info_list.length >= 1) {
+        thisArticle.avatar = data2.data.info_list[0].ext_info.yesapi_avatar;
+      }
+      this.articleItem = thisArticle;
+    },
+    //连接评论的头像
+    async condonAvatar(uuids, newData) {
+      let data = await this.$api.userMultiProfile(uuids).catch(err => {
+        console.log(err);
+        this.$message.error("数据获取失败");
+        return "获取失败";
+      });
+
+      if (data.data.info_list) {
+        let avatarList = data.data.info_list;
+        console.log(avatarList);
+        newData.forEach(item => {
+          let avatarInfo = avatarList.filter(oItem => {
+            return oItem.uid == item.user_id;
+          });
+          item.avatar = avatarInfo[0].ext_info.yesapi_avatar;
+        });
+      }
+      this.commentList = this.commentList.concat(newData);
+      this.loading = false;
     },
     changePriceFater(val) {
       if (val) {
-        this.article.praise_num += 1;
+        this.articleItem.praise_num += 1;
       } else {
-        this.article.praise_num -= 1;
+        this.articleItem.praise_num -= 1;
       }
-      this.article.praise = val;
+      this.articleItem.praise = val;
     },
-    onLoad() {},
+    changePraiseStyle(val) {
+      if (val === "success") {
+        if (!this.articleItem.praise) {
+          this.articleItem.praise_num += 1;
+          this.articleItem.praise = true;
+        } else {
+          this.articleItem.praise_num -= 1;
+          this.articleItem.praise = false;
+        }
+      }
+    },
     onReturn() {
-      this.$router.go(-1);
+      // if()
+      if (this.$route.matched.length <= 1) {
+        this.$router.push("/");
+      } else {
+        this.$router.back(-1);
+      }
     }
   },
   beforeRouteLeave(to, from, next) {
-    console.log(9999)
     to.meta.keepAlive = true;
     next();
   },
   computed: {
-    ...mapState(['clickArticle'])
+    ...mapState(["clickArticle"])
   },
   components: {
-    'van-list': List,
-    'van-nav-bar': NavBar,
-    'article-item': () => import('../components/articleItem')
+    "van-list": List,
+    "van-nav-bar": NavBar,
+    "article-item": () => import("../components/articleItem"),
+    "write-comment": () => import("../components/writeComment"),
+    "outside-comment": () => import("../components/outsideComment"),
+    "van-button": Button
   }
 };
 </script>
 
-<style lang="" scoped></style>
+<style lang="scss" scoped>
+.footer {
+  position: fixed;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  line-height: 50px;
+  border-top: 1px solid #efefef;
+  background: #fff;
+
+  button {
+    width: 50%;
+    height: 30px;
+    background: #fff;
+    border: none;
+    outline: none;
+    &:last-of-type {
+      border-left: 1px solid #efefef;
+    }
+  }
+}
+.van-icon {
+  margin-right: 8px;
+}
+.list {
+  p {
+    font-size: 18px;
+    height: 28px;
+    line-height: 28px;
+    border-bottom: 1px solid #636363;
+    padding-left: 10px;
+  }
+  .commentList {
+    padding-bottom: 60px;
+  }
+}
+</style>

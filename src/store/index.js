@@ -11,7 +11,9 @@ export default new Vuex.Store({
     // uuid: null,
     username: null,
     avatar: null,
-    userInfo: null
+    // userInfo: null
+    userInfo: {username: "admin"}
+
   },
   mutations: {
     saveClickArticle(state, data) {

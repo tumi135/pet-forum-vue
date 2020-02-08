@@ -39,6 +39,9 @@ export default {
           return '文章获取失败';
         });
       let newData = data.data.list || [];
+      if(newData.length < this.articleListInfo.perpage){
+        this.finished = true;
+      }
       if (data.data.list) {
         let uuids = data.data.list.map(item => {
           return item.user_id;
@@ -50,7 +53,7 @@ export default {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
         this.$message.error('数据获取失败');
-        return '文章获取失败';
+        return '获取失败';
       });
       if (data.data.info_list) {
         let avatarList = data.data.info_list;
@@ -63,9 +66,7 @@ export default {
           item.avatar = avatarInfo[0].ext_info.yesapi_avatar;
         });
       }
-      if(newData.length < this.articleListInfo.perpage){
-        this.finished = true;
-      }
+      
       this.articleList = this.articleList.concat(newData);
       this.loading = false;
     },
@@ -112,4 +113,8 @@ export default {
 };
 </script>
 
-<style lang="" scoped></style>
+<style scoped>
+.article-list{
+  padding-bottom: 60px;
+}
+</style>

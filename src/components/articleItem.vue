@@ -6,7 +6,7 @@
       </div>
       <div class="info">
         <p>{{ articleItem.writer }}</p>
-        <p>{{ articleItem.add_time }}</p>
+        <p class="time">{{ articleItem.add_time }}</p>
       </div>
     </div>
     <div>{{ articleItem.content }}</div>
@@ -23,7 +23,7 @@
       <van-button @click.stop="toArticleItem('comment')">
         <van-icon name="chat-o" />{{ articleItem.comment_num }}
       </van-button>
-      <van-button @click.stop="changePrice">
+      <van-button @click.stop="changePraise">
         <van-icon v-if="articleItem.praise" name="good-job" color="#FFA500" />
         <van-icon v-else name="good-job-o" />
         {{ articleItem.praise_num }}
@@ -33,11 +33,13 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
-import { Grid, GridItem, Image, ImagePreview, Button } from 'vant'; //, ImagePreview, Button
-import tool from '../my_config/tool';
+import { mapMutations } from "vuex";
+import { Grid, GridItem, Image, ImagePreview, Button } from "vant"; //, ImagePreview, Button
+import { changePraise } from "../mixins/changePraise";
+
 export default {
-  props: ['articleItem', 'itemIndex', 'type'],
+  props: ["articleItem", "itemIndex", "type", "commentShow"],
+  mixins: [changePraise],
   data() {
     return {
       pic: []
@@ -47,7 +49,7 @@ export default {
     this.piclist();
   },
   methods: {
-    ...mapMutations(['saveClickArticle']),
+    ...mapMutations(["saveClickArticle"]),
     toImg(index) {
       let myPic = this.pic.map(item => {
         return item.url;
@@ -75,51 +77,26 @@ export default {
       }
     },
     toArticleItem(type) {
+      if (this.type == "article") {
+        this.$emit("update:commentShow", true);
+        return;
+      }
       this.saveClickArticle(this.articleItem);
-      if(type == "comment"){
+      if (type == "comment") {
         this.$router.push({
-        name: 'article',
-        query: { article_id: this.articleItem.id, comment: "true" }
-      });
-      }else{
-        this.$router.push({
-        name: 'article',
-        query: { article_id: this.articleItem.id }
-      });
-      }
-      
-      
-    },
-    changePrice: tool.debounce(function() {
-      if (!this.articleItem.praise) {
-        this.createPraise();
+          name: "article",
+          query: { article_id: this.articleItem.id, comment: "true" }
+        });
       } else {
-        this.deletePraise();
+        this.$router.push({
+          name: "article",
+          query: { article_id: this.articleItem.id }
+        });
       }
-    }, 1000),
-    async createPraise() {
-      let data = await this.$api
-        .createPraise(this.articleItem.id)
-        .catch(err => {
-          console.log(err);
-          this.$message.error('数据获取失败');
-          return 'err';
-        });
-      this.changeArticleList(data);
     },
-    async deletePraise() {
-      let data = await this.$api
-        .deletePraise(this.articleItem.id)
-        .catch(err => {
-          console.log(err);
-          this.$message.error('数据获取失败');
-          return 'err';
-        });
-      this.changeArticleList(data);
-    },
-    changeArticleList(val) {
-      if (val === 'success') {
-        this.$emit('changePriceSon', !this.articleItem.praise, this.itemIndex);
+    changePraiseStyle(val) {
+      if (val === "success") {
+        this.$emit("changePriceSon", !this.articleItem.praise, this.itemIndex);
       }
     }
   },
@@ -129,10 +106,10 @@ export default {
     }
   },
   components: {
-    'van-grid': Grid,
-    'van-grid-item': GridItem,
-    'van-image': Image,
-    'van-button': Button
+    "van-grid": Grid,
+    "van-grid-item": GridItem,
+    "van-image": Image,
+    "van-button": Button
   }
 };
 </script>
@@ -159,12 +136,16 @@ export default {
       border-radius: 50%;
     }
   }
+  .time {
+    font-size: 10px;
+    color: #636363;
+  }
 }
 .footer {
   margin-top: 10px;
   button {
     width: 50%;
-    height: 60px;
+    height: 40px;
     background: #fff;
     border: none;
     outline: none;

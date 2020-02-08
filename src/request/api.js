@@ -729,7 +729,7 @@ const api = {
     // return axios.all([deleteMyArticle(), deleteMyComment(), deleteMyPraise()]);
   },
   //创建评论
-  createComment: (tid, content, uid, create_name, rid, r_name) => {
+  createComment: (tid, content,  rid, r_name) => {
     let check = checkLogin;
     if (!check) {
       return Promise.reject("请登录后再操作")
@@ -737,11 +737,11 @@ const api = {
 
     function createMyComment() {
       let data = {
-        uuid: store.state.uuid,
+        uid: store.state.uuid,
         tid: tid,
         content: content,
-        uid: uid,
-        create_name: create_name,
+        // uid: uid,
+        create_name: store.state.userInfo.username,
         rid: rid,
         r_name: r_name
       };
@@ -750,7 +750,7 @@ const api = {
         s: "App.Table.CheckCreateOrUpdate",
         model_name: "yesapi_ann_blog_comment",
         data: data,
-        check_field: "tid, content, uid, create_name"
+        check_field: "tid,content,uid,create_name"
       });
     }
 
@@ -763,7 +763,13 @@ const api = {
         change_value: 1
       });
     }
-    return axios.all([createMyComment(), changeArticle()]);
+    return axios.all([createMyComment(), changeArticle()]).then(axios.spread(function (acct) {
+      if(acct.data.err_code == 0){
+        return "success"
+      }else {
+        return "err"
+      }
+    }));
   },
   //评论分页查询列表数据接口(主题全部)
   commentsFreeQuery: (page, perpage, tid, create_name) => {
@@ -957,8 +963,11 @@ const api = {
     }));
   },
   //点赞分页查询列表数据接口
-  praiseFreeQuery: (page, perpage) => {
+  praiseFreeQuery: (page, perpage, articleId) => {
     let where = ["id>0", "userId='" + store.state.uuid + "'"];
+    if(articleId){
+      where.push("articleId=" + articleId)
+    }
     return axios.post("/", {
       s: "App.Table.FreeQuery",
       model_name: "yesapi_praise",
