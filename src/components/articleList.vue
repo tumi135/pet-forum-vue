@@ -1,25 +1,34 @@
 <template>
   <div class="article-list">
-    <van-list
-      :offset="100"
-      @load="onLoad"
-      v-model="loading"
-      :finished="finished"
-      :immediate-check="false"
-      finished-text="没有更多了"
-    >
-      <article-item v-for="(item,index) in articleList" :key="item.id" @changePriceSon="changePriceFater" :article-item="item" :item-index="index"/>
-    </van-list>
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <van-list
+        :offset="100"
+        @load="onLoad"
+        v-model="loading"
+        :finished="finished"
+        :immediate-check="false"
+        finished-text="没有更多了"
+      >
+        <article-item
+          v-for="(item, index) in articleList"
+          :key="item.id"
+          @changePriceSon="changePriceFater"
+          :article-item="item"
+          :item-index="index"
+        />
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
 <script>
-import { List } from 'vant';
+import { List, PullRefresh } from 'vant';
 export default {
   props: ['articleListInfo'],
   data() {
     return {
       articleList: [],
+      refreshing: false,
       loading: false,
       finished: false,
       myPraise: []
@@ -39,7 +48,8 @@ export default {
           return '文章获取失败';
         });
       let newData = data.data.list || [];
-      if(newData.length < this.articleListInfo.perpage){
+      this.refreshing = false;
+      if (newData.length < this.articleListInfo.perpage) {
         this.finished = true;
       }
       if (data.data.list) {
@@ -52,7 +62,6 @@ export default {
     async condonAvatarAndPraise(uuids, newData) {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
         return '获取失败';
       });
       if (data.data.info_list) {
@@ -61,12 +70,12 @@ export default {
           let avatarInfo = avatarList.filter(oItem => {
             return oItem.uuid == item.user_id;
           });
-          let praise = this.myPraise.includes(item.id)
-          item.praise = praise
+          let praise = this.myPraise.includes(item.id);
+          item.praise = praise;
           item.avatar = avatarInfo[0].ext_info.yesapi_avatar;
         });
       }
-      
+
       this.articleList = this.articleList.concat(newData);
       this.loading = false;
     },
@@ -75,32 +84,38 @@ export default {
       newInfo.page += 1;
       this.$emit('update:articleListInfo', newInfo);
     },
-    async getPraise(){
-      let data = await this.$api.praiseFreeQuery(1,500).catch(err => {
-          console.log(err);
-          this.$message.error('数据获取失败');
-          return '文章获取失败';
-        });
-        let dataArry = data.data.list || []
-        this.myPraise = dataArry.map(item => {
-          return item.articleId
-        })
+    onRefresh() {
+      let newInfo = JSON.parse(JSON.stringify(this.articleListInfo));
+      newInfo.page = 1;
+      this.articleList =[];
+      this.$emit('update:articleListInfo', newInfo);
     },
-    changePriceFater(val,index){
+    async getPraise() {
+      let data = await this.$api.praiseFreeQuery(1, 500).catch(err => {
+        console.log(err);
+        this.$message.error('数据获取失败');
+        return '文章获取失败';
+      });
+      let dataArry = data.data.list || [];
+      this.myPraise = dataArry.map(item => {
+        return item.articleId;
+      });
+    },
+    changePriceFater(val, index) {
       let num;
-      if(val){
-        num = this.articleList[index].praise_num + 1
-      }else{
-        num = this.articleList[index].praise_num - 1
+      if (val) {
+        num = this.articleList[index].praise_num + 1;
+      } else {
+        num = this.articleList[index].praise_num - 1;
       }
-      this.$set(this.articleList[index], `praise`, val)
-      this.$set(this.articleList[index], `praise_num`, num)
+      this.$set(this.articleList[index], `praise`, val);
+      this.$set(this.articleList[index], `praise_num`, num);
     }
   },
   watch: {
     articleListInfo: {
       handler() {
-        this.init()
+        this.init();
       },
       // immediate: true,
       deep: true
@@ -108,13 +123,14 @@ export default {
   },
   components: {
     'van-list': List,
-    'article-item': () => import('../components/articleItem'),
+    'van-pull-refresh': PullRefresh,
+    'article-item': () => import('../components/articleItem')
   }
 };
 </script>
 
 <style scoped>
-.article-list{
+.article-list {
   padding-bottom: 60px;
 }
 </style>

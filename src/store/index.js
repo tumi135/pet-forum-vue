@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     uuid: '0FA4F3F67FFA8AE2F99738F754D097E4',
     clickArticle: {},
+    clickComment: {},
     token: null,
     // uuid: null,
     username: null,

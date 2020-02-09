@@ -2,7 +2,7 @@
   <div>
     <van-nav-bar
       title="文章正文"
-      left-text="返回"
+      left-text="首页"
       left-arrow
       @click-left="onReturn"
     />
@@ -14,21 +14,23 @@
     />
     <div class="list">
       <p>评论列表</p>
-      <van-list
-        class="commentList"
-        :offset="100"
-        @load="initCommentList"
-        v-model="loading"
-        :finished="finished"
-        :immediate-check="false"
-        finished-text="没有更多了"
-      >
-        <outside-comment
-          v-for="item in commentList"
-          :key="item.id + 'comment'"
-          :comment-item="item"
-        ></outside-comment>
-      </van-list>
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+        <van-list
+          class="commentList"
+          :offset="100"
+          @load="initCommentList"
+          v-model="loading"
+          :finished="finished"
+          :immediate-check="false"
+          finished-text="没有更多了"
+        >
+          <outside-comment
+            v-for="item in commentList"
+            :key="item.id + 'comment'"
+            :comment-item="item"
+          ></outside-comment>
+        </van-list>
+      </van-pull-refresh>
     </div>
     <div class="footer van-hairline--top">
       <van-button @click="commentOpen = true">
@@ -48,15 +50,16 @@
 </template>
 
 <script>
-import { List, NavBar, Button } from "vant";
-import { mapState } from "vuex";
-import { changePraise } from "../mixins/changePraise";
+import { List, NavBar, Button, PullRefresh } from 'vant';
+import { mapState } from 'vuex';
+import { changePraise } from '../mixins/changePraise';
 export default {
   mixins: [changePraise],
   data() {
     return {
       articleId: null,
       articleItem: {},
+      refreshing: false,
       loading: false,
       finished: false,
       commentOpen: false,
@@ -68,7 +71,7 @@ export default {
   created() {
     this.articleId = this.$route.query.article_id;
     this.commentOpen =
-      this.$route.query.comment && this.$route.query.comment == "true"
+      this.$route.query.comment && this.$route.query.comment == 'true'
         ? true
         : false;
     this.initArticle();
@@ -82,27 +85,22 @@ export default {
       }
       let data = await this.$api.getArticle(this.articleId).catch(err => {
         console.log(err);
-        this.$message.error("数据获取失败");
-        return "文章获取失败";
+        this.$message.error('数据获取失败');
+        return '文章获取失败';
       });
       this.condonAvatarAndPraise(data.data.data); //
     },
     //获取评论列表
     async initCommentList() {
-      console.log("aaa")
-      if(this.loading){
-        return
-      }
-      this.loading = true
+      this.loading = true;
       let data = await this.$api
         .commentFreeQuery(this.page, this.perpage, this.articleId)
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
-          return "评论获取失败";
+          return '评论获取失败';
         });
-        this.loading = false
       let newData = data.data.list || [];
+      this.refreshing = false;
       if (newData.length < this.perpage) {
         this.finished = true;
       }
@@ -116,22 +114,22 @@ export default {
     },
     //连接文章的头像及点赞
     async condonAvatarAndPraise(thisArticle) {
-      if (thisArticle == "文章获取失败") {
+      if (thisArticle == '文章获取失败') {
         return;
       }
       let data = await this.$api
         .praiseFreeQuery(1, 500, this.articleId)
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
-          return "获取失败";
+          this.$message.error('数据获取失败');
+          return '获取失败';
         });
       let data2 = await this.$api
         .userMultiProfile([thisArticle.user_id])
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
-          return "获取失败";
+          this.$message.error('数据获取失败');
+          return '获取失败';
         });
       if (data.data.list.length >= 1) {
         thisArticle.praise = true;
@@ -147,8 +145,8 @@ export default {
     async condonAvatar(uuids, newData) {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
-        this.$message.error("数据获取失败");
-        return "获取失败";
+        this.$message.error('数据获取失败');
+        return '获取失败';
       });
 
       if (data.data.info_list) {
@@ -173,7 +171,7 @@ export default {
       this.articleItem.praise = val;
     },
     changePraiseStyle(val) {
-      if (val === "success") {
+      if (val === 'success') {
         if (!this.articleItem.praise) {
           this.articleItem.praise_num += 1;
           this.articleItem.praise = true;
@@ -183,29 +181,36 @@ export default {
         }
       }
     },
+    onRefresh() {
+      this.page = 1;
+      this.commentList = [];
+      this.initCommentList();
+    },
     onReturn() {
       // if()
-      if (this.$route.matched.length <= 1) {
-        this.$router.push("/");
-      } else {
-        this.$router.back(-1);
-      }
+        this.$router.push('/');
+      
     }
   },
   beforeRouteLeave(to, from, next) {
     to.meta.keepAlive = true;
+    if (to.name != 'commentItemList') {
+      from.meta.keepAlive = false;
+    }
+
     next();
   },
   computed: {
-    ...mapState(["clickArticle"])
+    ...mapState(['clickArticle'])
   },
   components: {
-    "van-list": List,
-    "van-nav-bar": NavBar,
-    "article-item": () => import("../components/articleItem"),
-    "write-comment": () => import("../components/writeComment"),
-    "outside-comment": () => import("../components/outsideComment"),
-    "van-button": Button
+    'van-list': List,
+    'van-pull-refresh': PullRefresh,
+    'van-nav-bar': NavBar,
+    'article-item': () => import('../components/articleItem'),
+    'write-comment': () => import('../components/writeComment'),
+    'outside-comment': () => import('../components/outsideComment'),
+    'van-button': Button
   }
 };
 </script>

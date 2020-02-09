@@ -15,6 +15,10 @@ export default {
 </script>
 
 <style>
+*{
+  padding: 0;
+  margin: 0;
+}
 html {
   background: #e7e7e7;
 }

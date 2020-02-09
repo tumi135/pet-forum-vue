@@ -13,7 +13,7 @@ const Find = () => import('../views/find');
 const CreateArticle = () => import('../views/createArticle');
 const Announcements = () => import('../views/announcements');
 const Article = () => import('../views/article');
-const CommentItem = () => import('../views/commentItem');
+const CommentItemList = () => import('../views/commentItemList');
 
 
 
@@ -88,9 +88,9 @@ const routes = [
     component: Article
   },
   {
-    path: '/commentItem',
-    name: 'commentItem',
-    component: CommentItem
+    path: '/commentItemList',
+    name: 'commentItemList',
+    component: CommentItemList
   }
 ];
 

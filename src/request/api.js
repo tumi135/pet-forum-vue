@@ -440,6 +440,16 @@ const api = {
       check_field: "title,content"
     });
   },
+  //评论获取一条
+  announcementOneFreeQuery: id => {
+    let where = ["id="+id];
+    
+    return axios.post("/", {
+      s: "App.Table.FreeFindOne",
+      model_name: "yesapi_crm_announcements",
+      where: where
+    });
+  },
   //公告分页查询列表数据接口
   announcementsFreeQuery: (page, perpage, online) => {
     let where = ["id>0"];
@@ -531,6 +541,7 @@ const api = {
       check_field: "type_name,listorder,litpic"
     });
   },
+  
   //文章分类分页查询列表数据接口
   articleTypeFreeQuery: (page, perpage) => {
     let where = ["id>0"];
@@ -771,6 +782,16 @@ const api = {
       }
     }));
   },
+  //评论获取一条
+  commentsOneFreeQuery: id => {
+    let where = ["id="+id];
+    
+    return axios.post("/", {
+      s: "App.Table.FreeFindOne",
+      model_name: "yesapi_ann_blog_comment",
+      where: where
+    });
+  },
   //评论分页查询列表数据接口(主题全部)
   commentsFreeQuery: (page, perpage, tid, create_name) => {
     let where = ["id>0"];
@@ -800,8 +821,8 @@ const api = {
     });
   },
   //评论分页查询列表数据接口(评论)
-  commentFreeQuery2: (page, perpage, tid, rid) => {
-    let where = ["id>0", "tid=" + tid, "rid=" + rid];
+  commentFreeQuery2: (page, perpage, rid) => {
+    let where = ["id>0",  "rid=" + rid];
     return axios.post("/", {
       s: "App.Table.FreeQuery",
       model_name: "yesapi_ann_blog_comment",

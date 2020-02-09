@@ -24,7 +24,7 @@
 import { Overlay, Field, Button, Toast } from 'vant';
 export default {
   name: '',
-  props: ['commentShow', 'replyTid', 'replyRname', 'replyRid'],
+  props: ['commentShow', 'replyTid', 'replyRname', 'replyRid','replyName'],
   data() {
     return {
       message: '',
@@ -38,19 +38,23 @@ export default {
     async sendComment() {
       var reg = /^\s*$/g;
       var test = reg.test(this.message);
+      var message = this.message;
+      if(this.replyName){
+        message = '回复 @' + this.replyName + ': ' + message
+      }
+      
       if (!test) {
         if (!this.flag) {
           this.flag = true;
           let data = await this.$api
             .createComment(
               this.replyTid,
-              this.message,
+              message,
               this.replyRid || null,
               this.replyRname || null
             )
             .catch(err => {
               console.log(err);
-              this.$message.error('数据获取失败');
               return '获取失败';
             });
           this.flag = false;

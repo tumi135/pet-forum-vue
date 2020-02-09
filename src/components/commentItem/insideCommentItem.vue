@@ -11,40 +11,37 @@
     </div>
     <div>{{ commentItem.content }}</div>
     <div class="footer van-hairline--top">
-      <span class="time" @click="to">{{ commentItem.add_time }}</span>
-      <button
-        v-if="type !== 'commentItemList'"
-        class="toCommentItem"
-        @click="to"
+      <span class="time">{{ commentItem.add_time }}</span>
+      <van-button
+        class="toReplyComment"
+        @click="toReplyComment"
       >
-        查看回复>>
-      </button>
+        回复评论>>
+      </van-button>
     </div>
   </div>
 </template>
 
 <script>
-// import { Button } from 'vant'; //, ImagePreview, Button
+import { Button } from 'vant'; //, ImagePreview, Button
 
 export default {
-  props: ['commentItem', 'type'],
+  props: ['commentItem', 'type','replyName','commentShow'],
   data() {
     return {
       pic: []
     };
   },
+  created() {},
   methods:{
-    to(){
-      this.$router.push({
-          path: '/commentItemList',
-          query: { comment_tid: this.commentItem.tid, comment_id: this.commentItem.id }
-        })
+    toReplyComment(){
+      this.$emit("update:replyName", this.commentItem.create_name);
+      this.$emit('update:commentShow', true);
     }
   },
-  created() {},
   watch: {},
   components: {
-    // 'van-button': Button
+    'van-button': Button
   }
 };
 </script>
@@ -64,8 +61,8 @@ export default {
   align-items: center;
 
   .avatar {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     margin-right: 10px;
 
     img {
@@ -84,10 +81,10 @@ export default {
     font-size: 10px;
     color: #636363;
   }
-  .toCommentItem {
+  .toReplyComment {
     color: #0080ff;
-    border: none;
-    outline: none;
+    border: 0px;
+    outline: 0px;
     background: transparent;
   }
 }

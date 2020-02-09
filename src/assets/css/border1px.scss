@@ -1,0 +1,21 @@
+@mixin borderCreator($direction, $type, $color) {
+  @if $direction!= "" {
+    border-#{$direction}: 1px $type $color;
+  } @else {
+    border: 1px $type $color;
+  }
+  @media screen and (-webkit-min-device-pixel-ratio: 2) {
+    @if $direction!= "" {
+      border-#{$direction}: 0.5px $type $color;
+    } @else {
+      border: 0.5px $type $color;
+    }
+  }
+  @media screen and (-webkit-min-device-pixel-ratio: 3) {
+    @if $direction!= "" {
+      border-#{$direction}: 0.333333px $type $color;
+    } @else {
+      border: 0.333333px $type $color;
+    }
+  }
+}
