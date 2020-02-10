@@ -551,7 +551,7 @@ const api = {
       where: where,
       page: page,
       perpage: perpage,
-      order: ["id DESC"]
+      order: ["listorder DESC"]
     });
   },
   //修改文章分类

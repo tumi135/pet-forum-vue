@@ -6,12 +6,12 @@
       left-arrow
       @click-left="onReturn"
     />
-    <outside-comment
-      :comment-item="outsideCommentItem"
-      type="commentItemList"
-    ></outside-comment>
-    <div class="commentList">
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <outside-comment
+        :comment-item="outsideCommentItem"
+        type="commentItemList"
+      ></outside-comment>
+      <div class="commentList">
         <van-list
           :offset="100"
           @load="initCommentList"
@@ -28,8 +28,8 @@
             :comment-show.sync="commentOpen"
           />
         </van-list>
-      </van-pull-refresh>
-    </div>
+      </div>
+    </van-pull-refresh>
     <footer class="replyButton" @click="openWriteComment">
       <div class="replytext ">回复评论</div>
     </footer>
@@ -157,9 +157,7 @@ export default {
       this.loading = false;
     },
     onReturn() {
-      
-        this.$router.push("/");
-      
+      this.$router.push('/');
     },
     onRefresh() {
       this.page = 1;

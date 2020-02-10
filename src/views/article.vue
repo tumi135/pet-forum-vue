@@ -6,15 +6,15 @@
       left-arrow
       @click-left="onReturn"
     />
-    <article-item
-      @changePriceSon="changePriceFater"
-      :article-item="articleItem"
-      :comment-show.sync="commentOpen"
-      type="article"
-    />
-    <div class="list">
-      <p>评论列表</p>
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <article-item
+        @changePriceSon="changePriceFater"
+        :article-item="articleItem"
+        :comment-show.sync="commentOpen"
+        type="article"
+      />
+      <div class="list">
+        <p>评论列表</p>
         <van-list
           class="commentList"
           :offset="100"
@@ -30,8 +30,8 @@
             :comment-item="item"
           ></outside-comment>
         </van-list>
-      </van-pull-refresh>
-    </div>
+      </div>
+    </van-pull-refresh>
     <div class="footer van-hairline--top">
       <van-button @click="commentOpen = true">
         <van-icon name="chat-o" />评论
@@ -188,8 +188,7 @@ export default {
     },
     onReturn() {
       // if()
-        this.$router.push('/');
-      
+      this.$router.push('/');
     }
   },
   beforeRouteLeave(to, from, next) {

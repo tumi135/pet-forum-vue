@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list">
+  <div class="article-list" :class="{paddingTop: type=='find'}">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <van-list
         :offset="100"
@@ -24,7 +24,7 @@
 <script>
 import { List, PullRefresh } from 'vant';
 export default {
-  props: ['articleListInfo'],
+  props: ['articleListInfo' ,'type'],
   data() {
     return {
       articleList: [],
@@ -87,7 +87,7 @@ export default {
     onRefresh() {
       let newInfo = JSON.parse(JSON.stringify(this.articleListInfo));
       newInfo.page = 1;
-      this.articleList =[];
+      this.articleList = [];
       this.$emit('update:articleListInfo', newInfo);
     },
     async getPraise() {
@@ -114,7 +114,12 @@ export default {
   },
   watch: {
     articleListInfo: {
-      handler() {
+      handler(n) {
+        if (n.page == 1) {
+          this.articleList = [];
+          this.loading = false;
+          this.finished = false;
+        }
         this.init();
       },
       // immediate: true,
@@ -132,5 +137,8 @@ export default {
 <style scoped>
 .article-list {
   padding-bottom: 60px;
+}
+.paddingTop{
+  padding-top: 90px;
 }
 </style>
