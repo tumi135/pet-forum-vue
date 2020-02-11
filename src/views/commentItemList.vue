@@ -163,6 +163,7 @@ export default {
       this.page = 1;
       this.commentList = [];
       this.initCommentList();
+      this.refreshing = false;
     },
     openWriteComment() {
       this.replyId = this.$route.query.comment_id;

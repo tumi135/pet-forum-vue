@@ -69,13 +69,12 @@ export default {
       this.articleTypeList = data.data.list || [];
     },
     changeOrder(val) {
-      console.log(val);
       this.listInfo.order = val;
-      this.page = 1;
+      this.listInfo.page = 1;
     },
     changeType(val) {
       this.listInfo.type_id = val;
-      this.page = 1;
+      this.listInfo.page = 1;
     }
   },
   components: {

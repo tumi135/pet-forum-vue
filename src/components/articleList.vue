@@ -44,7 +44,6 @@ export default {
         .articleFreeQuery(...Object.values(this.articleListInfo))
         .catch(err => {
           console.log(err);
-          this.$message.error('数据获取失败');
           return '文章获取失败';
         });
       let newData = data.data.list || [];
@@ -115,10 +114,14 @@ export default {
   watch: {
     articleListInfo: {
       handler(n) {
+        console.log(n.page)
+        console.log("rffrfrfrf")
         if (n.page == 1) {
+          console.log("aaaaa")
           this.articleList = [];
           this.loading = false;
           this.finished = false;
+          // return
         }
         this.init();
       },
