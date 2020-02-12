@@ -99,7 +99,7 @@ export default {
     async initTypeList() {
       let datas = await this.$api.articleTypeFreeQuery(1, 30).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
+        Toast.fail(`数据获取失败！`);
         return '';
       });
       this.typeList = datas.data.list || [];
@@ -178,7 +178,6 @@ export default {
         .catch(err => {
           return err;
         });
-      console.log(data);
       this.flag = false;
       if (data.ret == 200 && data.data.err_code == 0) {
         Toast.success('发布成功');

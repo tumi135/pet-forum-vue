@@ -16,7 +16,6 @@ axios.interceptors.request.use(
       config.data.uuid = storages.sessionGet("uuid");
     }
     if (config.data.admin_token) {
-      console.log(988);
       config.data.admin_token = storages.sessionGet("token");
     }
     if (config.data.admin_uuid) {

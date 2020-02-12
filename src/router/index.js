@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import api from "../request/api.js";
+import store from '../store/index';
+import api from '../request/api.js';
 
 const Layout = () => import('../components/layout.vue');
 const Blank = () => import('../components/blank.vue');
@@ -14,8 +15,6 @@ const CreateArticle = () => import('../views/createArticle');
 const Announcements = () => import('../views/announcements');
 const Article = () => import('../views/article');
 const CommentItemList = () => import('../views/commentItemList');
-
-
 
 Vue.use(VueRouter);
 
@@ -37,19 +36,19 @@ const routes = [
       {
         path: 'my',
         name: 'my',
-        meta: {index: 4},
+        meta: { index: 4, requireAuth: true },
         component: My
       },
       {
         path: 'feedback',
         name: 'feedback',
-        meta: {index: 3},
+        meta: { index: 3 },
         component: Feedback
       },
       {
         path: 'find',
         name: 'find',
-        meta: {index: 1},
+        meta: { index: 1 },
         component: Find
       }
     ]
@@ -74,13 +73,13 @@ const routes = [
   {
     path: '/createArticle',
     name: 'createArticle',
-    meta: {index: 2},
-    component:  CreateArticle
+    meta: { index: 2 },
+    component: CreateArticle
   },
   {
     path: '/announcements',
     name: 'announcements',
-    component:  Announcements
+    component: Announcements
   },
   {
     path: '/article',
@@ -98,47 +97,52 @@ const router = new VueRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition
+      return savedPosition;
     } else {
-      return { x: 0, y: 0 }
+      return { x: 0, y: 0 };
     }
   }
 });
 
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requireAuth) {
+    // 判断该路由是否需要登录权限
+    if (store.state.login) {
+      // 通过vuex state获取当前的登录状态
+      next();
+    } else {
+      let checkLogin = await api.userCheck();
 
-// router.scrollBehavior(to, from, savedPosition) {
-//   console.log(savedPosition)
-//   if (savedPosition) {
-//     return savedPosition
-//   } else {
-//     return { x: 0, y: 0 }
-//   }
-// }
+      if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
+        next();
+      } else {
+        next({
+          path: '/blank/login',
+          query: {
+            redirect: to.fullPath
+          } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+        });
+      }
+    }
+  } else {
+    //已登录的，跳回首页
 
-// router.beforeEach(async (to, from, next) => {
-//   let checkLogin = await api.userCheck();
-//   if (to.meta.requireAuth) {
-//     // 判断该路由是否需要登录权限
-//     if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
-//       // 通过vuex state获取当前的token是否存在
-//       next();
-//     } else {
-//       next({
-//         path: "/layout/login",
-//         query: {
-//           redirect: to.fullPath
-//         } // 将跳转的路由path作为参数，登录成功后跳转到该路由
-//       });
-//     }
-//   } else {
-//     //已登录的，跳回首页
-//     if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
-//       next("/home");
-//     } else {
-//       next();
-//     }
-//   }
-// });
-
+    if (to.name == 'login' || to.name == 'register') {
+      if (store.state.login) {
+        // 通过vuex state获取当前的登录状态
+        next('/home');
+      } else {
+        let checkLogin = await api.userCheck();
+        if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
+          next('/home');
+        } else {
+          next();
+        }
+      }
+    } else {
+      next();
+    }
+  }
+});
 
 export default router;

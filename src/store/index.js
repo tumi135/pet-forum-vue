@@ -5,9 +5,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    uuid: '0FA4F3F67FFA8AE2F99738F754D097E4',
+    uuid: '',
     clickArticle: {},
     clickComment: {},
+    login: false,
     token: null,
     // uuid: null,
     username: null,
@@ -25,11 +26,14 @@ export default new Vuex.Store({
       storages.sessionSet('uuid', data.uuid)
       state.token = data.token
       state.uuid = data.uuid
+      state.login = true
     },
     saveUserInfo: (state, data) => {
       state.token = storages.sessionGet("token");
       state.uuid = storages.sessionGet("uuid");
       state.userInfo = data
+      state.login = true
+
     },
     saveUserextInfo: (state, data) => {
       let oldState = JSON.parse(JSON.stringify(state.userInfo));

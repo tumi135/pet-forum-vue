@@ -1,5 +1,8 @@
 <template>
-<div>my</div>
+<div>my
+
+  <router-link :to="{name: 'login'}">login</router-link>
+</div>
 </template>
 
 <script>

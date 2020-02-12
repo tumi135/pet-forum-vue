@@ -1,14 +1,15 @@
 import axios from "./axios";
 import crypto from "crypto";
 import store from "../store/index";
-import storages from "../my_config/storages";
+// import storages from "../my_config/storages";
 
-function checkLogin() {
-  if (storages.sessionGet("token") && storages.sessionGet("uuid")) {
+async function checkLogin() {
+  if(store.state.login){
     return true
-  } else {
+  }else{
     return false
   }
+  
 }
 
 const api = {
@@ -220,7 +221,7 @@ const api = {
   },
   //base64图片上传接口
   uploadImgByBase64: (file, file_name) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
       return Promise.reject("请登录后再操作")
     }

@@ -10,12 +10,18 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  async created() {
+    let checkLogin = await this.$api.userProfile();
+    if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
+      this.$store.commit('saveUserInfo', checkLogin.data.info);
+    }
+  }
 };
 </script>
 
 <style>
-*{
+* {
   padding: 0;
   margin: 0;
 }
