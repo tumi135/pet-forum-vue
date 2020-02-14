@@ -14,7 +14,16 @@ const Find = () => import('../views/find');
 const CreateArticle = () => import('../views/createArticle');
 const Announcements = () => import('../views/announcements');
 const Article = () => import('../views/article');
-const CommentItemList = () => import('../views/commentItemList');
+const CommentItemList = () => import('../views/myArticle');
+const MyArticle = () => import('../views/myArticle');
+const MyPraise = () => import('../views/myPraise');
+const MyFunnyImg = () => import('../views/myFunnyImg');
+const CreateFunnyImg = () => import('../views/createFunnyImg');
+const ChangePassword = () => import('../views/changePassword');
+const ChangeUserInfo = () => import('../views/changeUserInfo');
+const Set = () => import('../views/set');
+
+
 
 Vue.use(VueRouter);
 
@@ -90,6 +99,51 @@ const routes = [
     path: '/commentItemList',
     name: 'commentItemList',
     component: CommentItemList
+  },
+  {
+    path: '/myArticle',
+    name: 'myArticle',
+    component: MyArticle,
+    meta: { requireAuth: true }
+
+  },
+  {
+    path: '/myPraise',
+    name: 'myPraise',
+    component: MyPraise,
+    meta: { requireAuth: true }
+
+  },
+  {
+    path: '/myFunnyImg',
+    name: 'myFunnyImg',
+    component: MyFunnyImg,
+    meta: { requireAuth: true }
+
+  },
+  {
+    path:'/createFunnyImg',
+    name:'createFunnyImg',
+    component: CreateFunnyImg
+  },
+  {
+    path:'/changePassword',
+    name:'changePassword',
+    component: ChangePassword
+  },
+  {
+    path:'/changeUserInfo',
+    name:'changeUserInfo',
+    component: ChangeUserInfo,
+    meta: { requireAuth: true }
+
+  },
+  {
+    path:'/set',
+    name:'set',
+    component: Set,
+    meta: { requireAuth: true }
+
   }
 ];
 

@@ -14,7 +14,12 @@ export default new Vuex.Store({
     username: null,
     avatar: null,
     // userInfo: null
-    userInfo: {username: "admin"}
+    userInfo: {},
+    numInfo:{
+      articleNum: null,
+      praiseNum: null,
+      funnyImgleNum: null
+    }
 
   },
   mutations: {
@@ -35,6 +40,10 @@ export default new Vuex.Store({
       state.login = true
 
     },
+    saveNumInfo: (state, data) => {
+      state.numInfo = data
+
+    },
     saveUserextInfo: (state, data) => {
       let oldState = JSON.parse(JSON.stringify(state.userInfo));
       oldState.ext_info = data;
@@ -43,6 +52,8 @@ export default new Vuex.Store({
     logout: (state) => {
       storages.sessionRemove('token')
       storages.sessionRemove('uuid')
+      state.login = false
+      state.userInfo = {}
       state.token = null
       state.uuid = null
     }

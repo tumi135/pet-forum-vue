@@ -85,7 +85,7 @@ export default {
       }
       let data = await this.$api.getArticle(this.articleId).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
+        this.$toast.fail('数据获取失败');
         return '文章获取失败';
       });
       this.condonAvatarAndPraise(data.data.data); //
@@ -121,14 +121,14 @@ export default {
         .praiseFreeQuery(1, 500, this.articleId)
         .catch(err => {
           console.log(err);
-          this.$message.error('数据获取失败');
+          this.$toast.fail('数据获取失败');
           return '获取失败';
         });
       let data2 = await this.$api
         .userMultiProfile([thisArticle.user_id])
         .catch(err => {
           console.log(err);
-          this.$message.error('数据获取失败');
+          this.$toast.fail('数据获取失败');
           return '获取失败';
         });
       if (data.data.list.length >= 1) {
@@ -145,7 +145,7 @@ export default {
     async condonAvatar(uuids, newData) {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
+        this.$toast.fail('数据获取失败');
         return '获取失败';
       });
 

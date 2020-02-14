@@ -13,6 +13,14 @@ async function checkLogin() {
 }
 
 const api = {
+  //统计条数
+  freeCount: (modelName,where) => {
+    return axios.post("/", {
+      s: "App.Table.FreeCount",
+      model_name: modelName,
+      where:where
+    });
+  },
   //创建新的验证码接口data:image/jpeg;base64,
   captchaCreate: () => {
     return axios.post("/", {
@@ -625,13 +633,17 @@ const api = {
     });
   },
   //文章分页查询列表数据接口
-  articleFreeQuery: (page, perpage, type_id, online, order) => {
+  articleFreeQuery: (page, perpage, type_id, online, order, user_id) => {
     let where = ["id>0"];
     if (online || online == 0) {
       where.push("online=" + online);
     }
     if (type_id) {
       where.push("type_id=" + type_id);
+    }
+    if (user_id) {
+      let uid = store.state.uuid
+      where.push("user_id='" + uid + "'");
     }
     if (!order) {
       order = "id"

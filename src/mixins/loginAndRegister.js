@@ -10,7 +10,7 @@ const loginAndRegister = {
     async getCaptchaInfo() {
       let captchaInfo = await this.$api.captchaCreate().catch(() => {
         Toast.fail('验证码获取失败！');
-        return ''
+        return '';
       });
       if (captchaInfo.ret == 200 && captchaInfo.data.err_code == 0) {
         this.captcha_img = captchaInfo.data.captcha_img;
@@ -19,27 +19,34 @@ const loginAndRegister = {
     },
     //检验验证码，正确则发送登录
     async checkChaInfo() {
-      let checkRule = this.checkRule()
-      if(!checkRule){
-        return
+      let checkRule = this.checkRule();
+      if (!checkRule) {
+        return;
       }
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '发送中...'
+      });
 
       let captchaCheckInfo = await this.$api
         .captchaVerify(this.captcha_id, this.form.captcha_code)
         .catch(() => {
           return '网络错误';
         });
+     
       if (captchaCheckInfo.ret == 200 && captchaCheckInfo.data.err_code == 0) {
-        if(this.$route.name == 'login'){
+        if (this.$route.name == 'login') {
           this.goLogin();
-        }else if(this.$route.name == 'register'){
+        } else if (this.$route.name == 'register') {
           this.goRrgister();
         }
       } else if (captchaCheckInfo == '网络错误') {
-        Toast.fail(captchaCheckInfo);
-
+        this.$toast.clear()
+        this.$toast.fail(captchaCheckInfo);
       } else {
-        Toast.fail(captchaCheckInfo.data.err_msg);
+        this.$toast.clear()
+        this.$toast.fail(captchaCheckInfo.data.err_msg);
       }
     }
   }

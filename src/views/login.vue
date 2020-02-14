@@ -44,82 +44,89 @@
 </template>
 
 <script>
-import { Button, Field, Toast } from "vant";
-import { mapMutations } from "vuex";
-import loginAndRegister from '../mixins/loginAndRegister.js'
+import { Button, Field } from 'vant';
+import { mapMutations } from 'vuex';
+import loginAndRegister from '../mixins/loginAndRegister.js';
 export default {
-  name: "",
-  mixins:[loginAndRegister],
+  name: '',
+  mixins: [loginAndRegister],
   data() {
     return {
       form: {
-        name: "",
-        password: "",
-        captcha_code: ""
+        name: '',
+        password: '',
+        captcha_code: ''
       },
       rule: {
         name: false,
         password: false,
         captcha_code: false
       },
-      username: "",
-      password: "",
-      captcha_id: "",
-      captcha_img: ""
+      username: '',
+      password: '',
+      captcha_id: '',
+      captcha_img: '',
+      redirect: ''
     };
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
-    ...mapMutations(["login"]),
-    checkRule(){
-      if(!this.form.name){
-        this.rule.name = true
-        return false
+    ...mapMutations(['login']),
+    checkRule() {
+      if (!this.form.name) {
+        this.rule.name = true;
+        return false;
       }
-      if(!this.form.password){
-        this.rule.password = true
-        return false
+      if (!this.form.password) {
+        this.rule.password = true;
+        return false;
       }
-      if(!this.form.captcha_code){
-        this.rule.captcha_code = true
-        return false
+      if (!this.form.captcha_code) {
+        this.rule.captcha_code = true;
+        return false;
       }
-      return true
+      return true;
     },
     async goLogin() {
       let loginInfo = await this.$api
         .userLogin(this.form.name, this.form.password)
         .catch(() => {
-          return "网络错误";
+          return '网络错误';
         });
-      this.fullscreenLoading = false;
+      this.$toast.clear();
+
       if (loginInfo.ret == 200 && loginInfo.data.err_code == 0) {
-        Toast.success("登录成功");
+        this.$toast.success('登录成功');
         this.login(loginInfo.data);
         if (this.$route.query.redirect) {
           this.$router.push(this.$route.query.redirect);
         } else {
-          this.$router.push({ name: "home" });
+          this.$router.push({ name: 'home' });
         }
-      } else if (loginInfo == "网络错误") {
-        Toast.fail("网络错误");
+      } else if (loginInfo == '网络错误') {
+        this.$toast.fail('网络错误');
       } else {
-        Toast.fail(loginInfo.data.err_msg);
+        this.$toast.fail(loginInfo.data.err_msg);
       }
     },
-    toRegisterRouter(){
-      this.$router.push({name: 'register'})
+    toRegisterRouter() {
+      if (this.$route.query.redirect) {
+        this.$router.push({
+          name: 'register',
+          query: { redirect: this.$route.query.redirect }
+        });
+      } else {
+        this.$router.push({ name: 'register' });
+      }
     }
   },
   components: {
-    "van-field": Field,
-    "van-button": Button
+    'van-field': Field,
+    'van-button': Button
   }
 };
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/css/loginAndRegister.scss";
+@import '@/assets/css/loginAndRegister.scss';
 </style>

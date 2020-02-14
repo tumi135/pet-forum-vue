@@ -36,7 +36,6 @@ export default {
     async init(){
       let data = await this.$api.announcementsFreeQuery(1,10,0).catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
           return "公告获取失败";
         });
         this.announcementLit = data.data.list || [{id:"",title:data.data.err_msg}] || [{id:"",title:data}]

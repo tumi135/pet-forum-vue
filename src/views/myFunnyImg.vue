@@ -1,0 +1,121 @@
+<template>
+  <div>
+    <van-sticky>
+    <van-nav-bar
+      class="mynavbar"
+      title="我的趣图"
+      left-text="首页"
+      left-arrow
+      @click-left="onReturn"
+    />
+    </van-sticky>
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <van-list
+        class="list"
+        :offset="100"
+        @load="init"
+        v-model="loading"
+        :finished="finished"
+        :immediate-check="false"
+        finished-text="没有更多了"
+      >
+      <div class="funnyImgItem" v-for="item in funnyImgList" :key="item.id">
+        <van-image :src="item.image_link" @click="toImg(item)"></van-image>
+        <p>描述:{{item.image_desc}}</p>
+        <p>分类：{{item.image_title}}</p>
+        <p>{{item.add_time}}</p>
+      </div>
+      </van-list>
+    </van-pull-refresh>
+    <router-link class="changeRouter" tag="div" :to="{name: 'createFunnyImg'}">
+      创建趣图
+    </router-link>
+  </div>
+</template>
+
+<script>
+import { NavBar, ImagePreview, List, PullRefresh, Image,Sticky } from 'vant';
+
+export default {
+  name: '',
+  data() {
+    return {
+      funnyImgList: [],
+      imagePreview: [],
+      refreshing: false,
+      loading: false,
+      finished: false,
+      page: 1,
+      perpage: 5
+    };
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      let data = await this.$api.funnyImgFreeQuery(this.page, this.perpage).catch(err => {
+        console.log(err);
+        return '趣图获取失败';
+      });
+      this.refreshing = false;
+      if (data.data.list.length < this.perpage) {
+        this.finished = true;
+      }
+      this.page += 1;
+      this.loading = false;
+      let newData = data.data.list || [];
+      this.funnyImgList = this.funnyImgList.concat(newData);
+
+    },
+    onRefresh() {
+      this.page = 1
+      this.funnyImgList = []
+      this.loading = false;
+      this.finished = false;
+    },
+    toImg(item) {
+      if (item.image_link) {
+        ImagePreview({
+          images: [item.image_link],
+          onClose() {
+            // do something
+          }
+        });
+      }
+    },
+    onReturn() {
+      this.$router.push('/');
+    }
+  },
+  components: {
+    'van-nav-bar': NavBar,
+    'van-list': List,
+    'van-pull-refresh': PullRefresh,
+    'van-image': Image,
+    'van-sticky':Sticky
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.funnyImgItem{
+  background: #fff;
+  margin-top: 5px;
+  padding: 5px;
+}
+.list{
+  padding-bottom: 60px;
+}
+.changeRouter{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  background: #fff;
+  box-shadow: 0px -1px 3px #888888;
+
+}
+</style>

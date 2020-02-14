@@ -39,7 +39,6 @@ export default {
         .carouselImgFreeQuery(1, 10, null, this.type, 0)
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
           return "轮播图获取失败";
         });
       this.swiper = data.data.list || [

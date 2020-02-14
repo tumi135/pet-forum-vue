@@ -21,14 +21,13 @@
 </template>
 
 <script>
-import { Overlay, Field, Button, Toast } from 'vant';
+import { Overlay, Field, Button } from 'vant';
 export default {
   name: '',
   props: ['commentShow', 'replyTid', 'replyRname', 'replyRid','replyName'],
   data() {
     return {
       message: '',
-      flag: false
     };
   },
   methods: {
@@ -44,8 +43,11 @@ export default {
       }
       
       if (!test) {
-        if (!this.flag) {
-          this.flag = true;
+        this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '发送中...'
+      });
           let data = await this.$api
             .createComment(
               this.replyTid,
@@ -57,17 +59,16 @@ export default {
               console.log(err);
               return '获取失败';
             });
-          this.flag = false;
+            this.$toast.clear()
           if (data == 'success') {
             this.message = '';
-            Toast.success('发布成功');
+            this.$toast.success('发布成功');
             this.$emit('update:commentShow', false);
           } else {
-            Toast.fail('发布出错');
+            this.$toast.fail('发布出错');
           }
-        }
       } else {
-        Toast('请填写评论内容！');
+        this.$toast('请填写评论内容！');
       }
     }
   },

@@ -38,6 +38,7 @@
         </ul>
       </nav>
     </div>
+    <my-swiper type="1" class="paddingTop"/>
     <article-list :article-list-info.sync="listInfo" type="find" />
   </div>
 </template>
@@ -78,7 +79,8 @@ export default {
     }
   },
   components: {
-    'article-list': () => import('../components/articleList')
+    'article-list': () => import('../components/articleList'),
+    'my-swiper': () => import('../components/swipe')
   }
 };
 </script>
@@ -149,5 +151,8 @@ export default {
       }
     }
   }
+}
+.paddingTop{
+  padding-top: 90px;
 }
 </style>

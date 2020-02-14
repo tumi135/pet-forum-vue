@@ -57,7 +57,7 @@ export default {
         .announcementOneFreeQuery(this.announcementId)
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
+          this.$toast.fail("数据获取失败");
           return "公告获取失败";
         });
       this.announcement = data.data.data;
@@ -66,7 +66,7 @@ export default {
     async initList() {
       let data = await this.$api.announcementsFreeQuery(1, 20, 0).catch(err => {
         console.log(err);
-        this.$message.error("数据获取失败");
+        this.$toast.fail("数据获取失败");
         return "公告获取失败";
       });
       this.announcementLit = data.data.list || [];
@@ -84,7 +84,6 @@ export default {
   },
   watch: {
     '$route.query.id'(){
-      console.log('#333')
       this.announcementId = this.$route.query.id;
     this.init();
     }

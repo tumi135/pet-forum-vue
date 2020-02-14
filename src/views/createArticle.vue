@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { Button, NavBar, Field, Picker, Popup, Uploader, Toast } from 'vant';
+import { Button, NavBar, Field, Picker, Popup, Uploader } from 'vant';
 
 export default {
   name: '',
@@ -90,8 +90,8 @@ export default {
     };
   },
   created() {
-    Toast.setDefaultOptions({ duration: 2000 });
-    Toast.setDefaultOptions('loading', { forbidClick: true });
+    this.$toast.setDefaultOptions({ duration: 2000 });
+    this.$toast.setDefaultOptions('loading', { forbidClick: true });
     this.initTypeList();
   },
   methods: {
@@ -99,7 +99,7 @@ export default {
     async initTypeList() {
       let datas = await this.$api.articleTypeFreeQuery(1, 30).catch(err => {
         console.log(err);
-        Toast.fail(`数据获取失败！`);
+        this.$toast.fail(`数据获取失败！`);
         return '';
       });
       this.typeList = datas.data.list || [];
@@ -122,7 +122,7 @@ export default {
       isLt1M = file.size / 1024 / 1024 < 0.5;
       big = 500;
       if (!isLt1M) {
-        Toast.fail(`上传文件大小不能超过 ${big}k!`);
+        this.$toast.fail(`上传文件大小不能超过 ${big}k!`);
         return false;
       }
       return true;
@@ -151,9 +151,7 @@ export default {
     },
     //发布文章
     async submitForm() {
-      if (this.flag) {
-        return;
-      }
+      
 
       var reg = /^\s*$/g;
       var test = reg.test(this.form.content);
@@ -166,7 +164,11 @@ export default {
         this.formRules.type_id = '请选择文章分类';
         return;
       }
-      this.flag = true;
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '加载中...'
+      });
       let data = await this.$api
         .createArticle(
           this.form.type_id,
@@ -178,9 +180,9 @@ export default {
         .catch(err => {
           return err;
         });
-      this.flag = false;
+      this.$toast.clear()
       if (data.ret == 200 && data.data.err_code == 0) {
-        Toast.success('发布成功');
+        this.$toast.success('发布成功');
         this.form = {
           type_id: '',
           content: '',
@@ -191,7 +193,7 @@ export default {
         this.picList = [];
         this.typeName = '';
       } else {
-        Toast.fail(`发布失败！`);
+        this.$toast.fail(`发布失败！`);
       }
     }
   },

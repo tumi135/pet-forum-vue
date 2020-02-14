@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list" :class="{paddingTop: type=='find'}">
+  <div class="article-list">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <van-list
         :offset="100"
@@ -46,6 +46,7 @@ export default {
           console.log(err);
           return '文章获取失败';
         });
+        console.log(data)
       let newData = data.data.list || [];
       this.refreshing = false;
       if (newData.length < this.articleListInfo.perpage) {
@@ -92,7 +93,6 @@ export default {
     async getPraise() {
       let data = await this.$api.praiseFreeQuery(1, 500).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
         return '文章获取失败';
       });
       let dataArry = data.data.list || [];
@@ -114,10 +114,7 @@ export default {
   watch: {
     articleListInfo: {
       handler(n) {
-        console.log(n.page)
-        console.log("rffrfrfrf")
         if (n.page == 1) {
-          console.log("aaaaa")
           this.articleList = [];
           this.loading = false;
           this.finished = false;
@@ -141,7 +138,5 @@ export default {
 .article-list {
   padding-bottom: 60px;
 }
-.paddingTop{
-  padding-top: 90px;
-}
+
 </style>

@@ -53,26 +53,26 @@
 </template>
 
 <script>
-import { Button, Field, Toast } from "vant";
-import loginAndRegister from "../mixins/loginAndRegister.js";
+import { Button, Field } from 'vant';
+import loginAndRegister from '../mixins/loginAndRegister.js';
 export default {
   mixins: [loginAndRegister],
   data() {
     return {
       form: {
-        name: "",
-        password: "",
-        checkPassword: "",
-        captcha_code: ""
+        name: '',
+        password: '',
+        checkPassword: '',
+        captcha_code: ''
       },
       rule: {
-        name: "",
-        password: "",
-        checkPassword: "",
+        name: '',
+        password: '',
+        checkPassword: '',
         captcha_code: false
       },
-      captcha_id: "",
-      captcha_img: ""
+      captcha_id: '',
+      captcha_img: ''
     };
   },
   created() {},
@@ -82,27 +82,27 @@ export default {
       var nameReg = /^[0-9a-zA-Z]{4,6}$/;
       var passwordReg = /^[0-9a-z]{6,12}$/;
       if (!this.form.name) {
-        this.rule.name = "请输入用户名";
+        this.rule.name = '请输入用户名';
         return false;
       }
       if (!nameReg.test(this.form.name)) {
-        this.rule.name = "账号格式不对!";
+        this.rule.name = '账号格式不对!';
         return false;
       }
       if (!this.form.password) {
-        this.rule.password = "请输入密码!";
+        this.rule.password = '请输入密码!';
         return false;
       }
       if (!passwordReg.test(this.form.password)) {
-        this.rule.password = "密码格式不对!!";
+        this.rule.password = '密码格式不对!!';
         return false;
       }
       if (!this.form.checkPassword) {
-        this.rule.checkPassword = "请再次输入密码";
+        this.rule.checkPassword = '请再次输入密码';
         return false;
       }
       if (this.form.checkPassword !== this.form.password) {
-        this.rule.checkPassword = "两次输入密码不一致!";
+        this.rule.checkPassword = '两次输入密码不一致!';
         return false;
       }
       if (!this.form.captcha_code) {
@@ -116,27 +116,34 @@ export default {
       let loginInfo = await this.$api
         .userRegister(this.form.name, this.form.password)
         .catch(() => {
-          return "网络错误";
+          return '网络错误';
         });
-      this.fullscreenLoading = false;
+      this.$toast.clear();
       if (loginInfo.ret == 200 && loginInfo.data.err_code == 0) {
-        Toast.success({ duration: 3, message: "注册成功" });
-        this.$router.push({ name: "login" });
+        this.$toast.success({ duration: 3, message: '注册成功' });
+        this.$router.push({ name: 'login' });
       } else {
-        Toast.fail(loginInfo.data.err_msg);
+        this.$toast.fail(loginInfo.data.err_msg);
       }
     },
     toLoginRouter() {
-      this.$router.push({ name: "login" });
+      if (this.$route.query.redirect) {
+        this.$router.push({
+          name: 'login',
+          query: { redirect: this.$route.query.redirect }
+        });
+      } else {
+        this.$router.push({ name: 'login' });
+      }
     }
   },
   components: {
-    "van-field": Field,
-    "van-button": Button
+    'van-field': Field,
+    'van-button': Button
   }
 };
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/css/loginAndRegister.scss";
+@import '@/assets/css/loginAndRegister.scss';
 </style>

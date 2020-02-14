@@ -40,28 +40,25 @@
 </template>
 
 <script>
-import { Overlay, Field, Button, Toast, Uploader } from "vant";
+import { Overlay, Field, Button, Uploader } from 'vant';
 export default {
-  name: "",
-  props: ["commentShow", "replyName"],
+  name: '',
+  props: ['commentShow', 'replyName'],
   data() {
     return {
-      message: "",
+      message: '',
       flag: false,
       picList: [],
       form: {
-        content: "",
+        content: '',
         pic: []
       }
     };
   },
-  created() {
-    Toast.setDefaultOptions({ duration: 2000 });
-    Toast.setDefaultOptions("loading", { forbidClick: true });
-  },
+  created() {},
   methods: {
     closeOverlay() {
-      this.$emit("update:commentShow", false);
+      this.$emit('update:commentShow', false);
     },
     async sendComment() {
       var reg = /^\s*$/g;
@@ -69,25 +66,28 @@ export default {
 
       let pics = JSON.stringify({ pic: this.form.pic });
       if (!test) {
-        if (!this.flag) {
-          this.flag = true;
-          let data = await this.$api
-            .createFeedback(this.form.content, this.replyName, pics)
-            .catch(err => {
-              console.log(err);
-              return "获取失败";
-            });
-          this.flag = false;
-          if (data.ret == 200 && data.data.err_code == 0) {
-            this.message = "";
-            Toast.success("发布成功");
-            this.$emit("update:commentShow", false);
-          } else {
-            Toast.fail("发布出错");
-          }
+        this.$toast.loading({
+          duration: 0, // 持续展示 toast
+          forbidClick: true,
+          message: '发送中...'
+        });
+        this.flag = true;
+        let data = await this.$api
+          .createFeedback(this.form.content, this.replyName, pics)
+          .catch(err => {
+            console.log(err);
+            return '获取失败';
+          });
+        this.$toast.clear();
+        if (data.ret == 200 && data.data.err_code == 0) {
+          this.message = '';
+          this.$toast.success('发布成功');
+          this.$emit('update:commentShow', false);
+        } else {
+          this.$toast.fail('发布出错');
         }
       } else {
-        Toast("请填写评论内容！");
+        this.$toast('请填写评论内容！');
       }
     },
     //图片上传前校验
@@ -96,18 +96,18 @@ export default {
       isLt1M = file.size / 1024 / 1024 < 0.5;
       big = 500;
       if (!isLt1M) {
-        Toast.fail(`上传文件大小不能超过 ${big}k!`);
+        this.$toast.fail(`上传文件大小不能超过 ${big}k!`);
         return false;
       }
       return true;
     },
     async afterRead(file) {
       // 此时可以自行将文件上传至服务器
-      file.status = "uploading";
-      file.message = "上传中...";
+      file.status = 'uploading';
+      file.message = '上传中...';
 
       let myImg = await this.$api
-        .uploadImgByBase64(file.content, "article_type")
+        .uploadImgByBase64(file.content, 'article_type')
         .catch(err => {
           return err;
         });
@@ -116,20 +116,20 @@ export default {
           url: myImg.data.url,
           name: file.file.name
         });
-        file.status = "done";
-        file.message = "";
+        file.status = 'done';
+        file.message = '';
       } else {
-        file.status = "failed";
-        file.message = "上传失败";
+        file.status = 'failed';
+        file.message = '上传失败';
       }
     }
   },
   watch: {},
   components: {
-    "van-overlay": Overlay,
-    "van-field": Field,
-    "van-button": Button,
-    "van-uploader": Uploader
+    'van-overlay': Overlay,
+    'van-field': Field,
+    'van-button': Button,
+    'van-uploader': Uploader
   }
 };
 </script>

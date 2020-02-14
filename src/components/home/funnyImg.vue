@@ -43,7 +43,6 @@ export default {
         .funnyImgFreeQuery(1, 10)
         .catch(err => {
           console.log(err);
-          this.$message.error("数据获取失败");
           return "趣图获取失败";
         });
       this.swiper = data.data.list || [];

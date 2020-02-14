@@ -97,8 +97,7 @@ export default {
       this.loading = true;
       let data = await this.$api
         .commentFreeQuery2(this.page, this.perpage, this.outsideCommentId)
-        .catch(err => {
-          console.log(err);
+        .catch(() => {
           return '评论获取失败';
         });
       let newData = data.data.list || [];
@@ -125,7 +124,7 @@ export default {
         .userMultiProfile([thisComment.uid])
         .catch(err => {
           console.log(err);
-          this.$message.error('数据获取失败');
+          this.$toast.fail('数据获取失败');
           return '获取失败';
         });
 
@@ -138,7 +137,7 @@ export default {
     async condonListAvatar(uuids, newData) {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
-        this.$message.error('数据获取失败');
+        this.$toast.fail('数据获取失败');
         return '获取失败';
       });
 
