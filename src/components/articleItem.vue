@@ -1,5 +1,17 @@
 <template>
-  <div class="articleItem" @click="toArticleItem()">
+  <div
+    class="articleItem"
+    @click="toArticleItem()"
+    :class="{ chose: articleItem.id == choseId }"
+  >
+    <div class="delete" v-if="articleType == 'myArticle'">
+      <van-button
+        type="danger"
+        @click.stop="handleDelete(articleItem.id)"
+        size="small"
+        >删除</van-button
+      >
+    </div>
     <div class="top">
       <div class="avatar">
         <img :src="articleItem.avatar" />
@@ -34,15 +46,16 @@
 
 <script>
 import { mapMutations } from "vuex";
-import { Grid, GridItem, Image, ImagePreview, Button } from "vant"; //, ImagePreview, Button
+import { Grid, GridItem, Image, ImagePreview, Button, Dialog } from "vant"; //, ImagePreview, Button
 import { changePraise } from "../mixins/changePraise";
 
 export default {
-  props: ["articleItem", "itemIndex", "type", "commentShow"],
+  props: ["articleItem", "itemIndex", "articleType", "commentShow"],
   mixins: [changePraise],
   data() {
     return {
-      pic: []
+      pic: [],
+      choseId: 0
     };
   },
   created() {
@@ -98,6 +111,29 @@ export default {
       if (val === "success") {
         this.$emit("changePriceSon", !this.articleItem.praise, this.itemIndex);
       }
+    },
+    //删除选中的
+    handleDelete(deleteId) {
+      let that = this;
+      this.choseId = deleteId;
+      Dialog.confirm({
+        title: "确定删除该趣图？"
+      })
+        .then(async () => {
+          let deletearticle = await this.$api
+            .deletearticle(deleteId)
+            .catch(err => {
+              console.log(err);
+              that.$toast.fail("数据获取失败");
+              return "";
+            });
+          if (deletearticle.ret == 200 && deletearticle.data.err_code == 0) {
+            that.$router.go(0);
+          }
+        })
+        .catch(() => {
+          this.choseId = 0;
+        });
     }
   },
   watch: {
@@ -119,6 +155,12 @@ export default {
   background: #fff;
   margin-bottom: 5px;
   padding: 5px 10px;
+}
+.chose {
+  background: rgba(253, 41, 41, 0.2);
+}
+.delete {
+  text-align: right;
 }
 .top {
   height: 100px;

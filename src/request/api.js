@@ -279,7 +279,8 @@ const api = {
       model_name: "okayapi_image",
       where: where,
       page: page,
-      perpage: perpage
+      perpage: perpage,
+      order: ["id DESC"]
     });
   },
   //修改趣图

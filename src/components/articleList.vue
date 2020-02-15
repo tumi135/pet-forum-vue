@@ -15,6 +15,7 @@
           @changePriceSon="changePriceFater"
           :article-item="item"
           :item-index="index"
+          :article-type="type"
         />
       </van-list>
     </van-pull-refresh>
@@ -22,9 +23,9 @@
 </template>
 
 <script>
-import { List, PullRefresh } from 'vant';
+import { List, PullRefresh } from "vant";
 export default {
-  props: ['articleListInfo' ,'type'],
+  props: ["articleListInfo", "type"],
   data() {
     return {
       articleList: [],
@@ -44,9 +45,8 @@ export default {
         .articleFreeQuery(...Object.values(this.articleListInfo))
         .catch(err => {
           console.log(err);
-          return '文章获取失败';
+          return "文章获取失败";
         });
-        console.log(data)
       let newData = data.data.list || [];
       this.refreshing = false;
       if (newData.length < this.articleListInfo.perpage) {
@@ -62,7 +62,7 @@ export default {
     async condonAvatarAndPraise(uuids, newData) {
       let data = await this.$api.userMultiProfile(uuids).catch(err => {
         console.log(err);
-        return '获取失败';
+        return "获取失败";
       });
       if (data.data.info_list) {
         let avatarList = data.data.info_list;
@@ -70,9 +70,11 @@ export default {
           let avatarInfo = avatarList.filter(oItem => {
             return oItem.uuid == item.user_id;
           });
-          let praise = this.myPraise.includes(item.id);
-          item.praise = praise;
-          item.avatar = avatarInfo[0].ext_info.yesapi_avatar;
+          if (avatarInfo[0]) {
+            let praise = this.myPraise.includes(item.id);
+            item.praise = praise;
+            item.avatar = avatarInfo[0].ext_info.yesapi_avatar || "";
+          }
         });
       }
 
@@ -82,18 +84,18 @@ export default {
     onLoad() {
       let newInfo = JSON.parse(JSON.stringify(this.articleListInfo));
       newInfo.page += 1;
-      this.$emit('update:articleListInfo', newInfo);
+      this.$emit("update:articleListInfo", newInfo);
     },
     onRefresh() {
       let newInfo = JSON.parse(JSON.stringify(this.articleListInfo));
       newInfo.page = 1;
       this.articleList = [];
-      this.$emit('update:articleListInfo', newInfo);
+      this.$emit("update:articleListInfo", newInfo);
     },
     async getPraise() {
       let data = await this.$api.praiseFreeQuery(1, 500).catch(err => {
         console.log(err);
-        return '文章获取失败';
+        return "文章获取失败";
       });
       let dataArry = data.data.list || [];
       this.myPraise = dataArry.map(item => {
@@ -127,9 +129,9 @@ export default {
     }
   },
   components: {
-    'van-list': List,
-    'van-pull-refresh': PullRefresh,
-    'article-item': () => import('../components/articleItem')
+    "van-list": List,
+    "van-pull-refresh": PullRefresh,
+    "article-item": () => import("../components/articleItem")
   }
 };
 </script>
@@ -138,5 +140,4 @@ export default {
 .article-list {
   padding-bottom: 60px;
 }
-
 </style>

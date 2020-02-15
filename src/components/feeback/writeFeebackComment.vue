@@ -60,10 +60,23 @@ export default {
     closeOverlay() {
       this.$emit('update:commentShow', false);
     },
+    getImgList() {
+      let list = [];
+      for (var item of this.picList) {
+        if (item.url) {
+          let imgInfo = {
+            url: item.url,
+            name: item.file.name
+          };
+          list.push(imgInfo);
+        }
+      }
+      return list;
+    },
     async sendComment() {
       var reg = /^\s*$/g;
       var test = reg.test(this.form.content);
-
+      this.form.pic = this.getImgList();
       let pics = JSON.stringify({ pic: this.form.pic });
       if (!test) {
         this.$toast.loading({

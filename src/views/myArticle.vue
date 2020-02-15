@@ -8,7 +8,7 @@
         @click-left="onReturn"
       />
     </van-sticky>
-    <article-list class="list" :article-list-info.sync="listInfo" />
+    <article-list class="list" :article-list-info.sync="listInfo" type="myArticle" />
     <router-link class="changeRouter" tag="div" :to="{name: 'createArticle'}">
       发布文章
     </router-link>

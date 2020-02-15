@@ -179,10 +179,10 @@ export default {
     }
   },
 
-  beforeRouteLeave(to, from, next) {
-    to.meta.keepAlive = true;
-    next();
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   to.meta.keepAlive = true;
+  //   next();
+  // },
   computed: {
     ...mapState(['clickComment'])
   },

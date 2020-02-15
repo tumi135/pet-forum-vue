@@ -14,7 +14,7 @@ const Find = () => import('../views/find');
 const CreateArticle = () => import('../views/createArticle');
 const Announcements = () => import('../views/announcements');
 const Article = () => import('../views/article');
-const CommentItemList = () => import('../views/myArticle');
+const CommentItemList = () => import('../views/commentItemList');
 const MyArticle = () => import('../views/myArticle');
 const MyPraise = () => import('../views/myPraise');
 const MyFunnyImg = () => import('../views/myFunnyImg');

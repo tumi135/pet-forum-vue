@@ -44,7 +44,6 @@
 
         <van-uploader
           v-model="picList"
-          multiple
           :before-read="beforeRead"
           :after-read="afterRead"
           :max-count="9"
@@ -138,21 +137,32 @@ export default {
           return err;
         });
       if (myImg.ret == 200 && myImg.data.err_code == 0) {
-        this.form.pic.push({
-          url: myImg.data.url,
-          name: file.file.name
-        });
         file.status = 'done';
         file.message = '';
+        file.url = myImg.data.url;
       } else {
         file.status = 'failed';
         file.message = '上传失败';
+        file.url = '';
       }
+    },
+    
+    getImgList() {
+      let list = [];
+      for (var item of this.picList) {
+        if (item.url) {
+          let imgInfo = {
+            url: item.url,
+            name: item.file.name
+          };
+          list.push(imgInfo);
+        }
+      }
+      return list;
     },
     //发布文章
     async submitForm() {
-      
-
+      this.form.pic = this.getImgList();
       var reg = /^\s*$/g;
       var test = reg.test(this.form.content);
       let pics = JSON.stringify({ pic: this.form.pic });
@@ -180,7 +190,7 @@ export default {
         .catch(err => {
           return err;
         });
-      this.$toast.clear()
+      this.$toast.clear();
       if (data.ret == 200 && data.data.err_code == 0) {
         this.$toast.success('发布成功');
         this.form = {

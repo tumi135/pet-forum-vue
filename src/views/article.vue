@@ -191,14 +191,14 @@ export default {
       this.$router.push('/');
     }
   },
-  beforeRouteLeave(to, from, next) {
-    to.meta.keepAlive = true;
-    if (to.name != 'commentItemList') {
-      from.meta.keepAlive = false;
-    }
+  // beforeRouteLeave(to, from, next) {
+  //   to.meta.keepAlive = true;
+  //   if (to.name != 'commentItemList') {
+  //     from.meta.keepAlive = false;
+  //   }
 
-    next();
-  },
+  //   next();
+  // },
   computed: {
     ...mapState(['clickArticle'])
   },
