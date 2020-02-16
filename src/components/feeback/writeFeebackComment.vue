@@ -96,6 +96,8 @@ export default {
           this.message = '';
           this.$toast.success('发布成功');
           this.$emit('update:commentShow', false);
+        } else if (data.ret == 401) {
+          this.$toast.fail(data.data.err_msg);
         } else {
           this.$toast.fail('发布出错');
         }

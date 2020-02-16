@@ -75,6 +75,8 @@ export default {
         if (newAvatar.ret == 200 && newAvatar.data.err_code == 0) {
           this.$emit('update:cutAvatarShow', false);
           this.$emit('myOriginAvatar', newAvatar.data.url);
+        } else if (newAvatar.ret == 401) {
+          this.$toast.fail(newAvatar.data.err_msg);
         } else {
           this.$toast('头像修改失败,刷新或换图片！');
         }

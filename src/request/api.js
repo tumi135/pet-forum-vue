@@ -3,13 +3,12 @@ import crypto from "crypto";
 import store from "../store/index";
 // import storages from "../my_config/storages";
 
-async function checkLogin() {
+function checkLogin() {
   if(store.state.login){
     return true
   }else{
     return false
   }
-  
 }
 
 const api = {
@@ -231,7 +230,15 @@ const api = {
   uploadImgByBase64: (file, file_name) => {
     let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     return axios.post("/", {
       s: "App.CDN.UploadImgByBase64",
@@ -249,9 +256,17 @@ const api = {
   },
   //创建趣图
   createFunnyImg: (image_title, image_link, image_desc) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       uuid: store.state.uuid,
@@ -285,9 +300,17 @@ const api = {
   },
   //修改趣图
   funnyImgChange: (id, image_title, image_link, image_desc) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       image_title: image_title,
@@ -304,9 +327,17 @@ const api = {
   },
   //删除趣图
   deleteFunnyImg: (...id) => {
-    let check = checkLogin
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let where = [];
     for (let i = 0; i < id.length; i++) {
@@ -333,7 +364,6 @@ const api = {
       create_by: store.state.userInfo.username,
       online: online
     };
-    console.log(data)
     data = JSON.stringify(data);
     return axios.post("/", {
       s: "App.Table.CheckCreateOrUpdate",
@@ -602,9 +632,17 @@ const api = {
   },
   //创建文章
   createArticle: (type_id, content, online, tuijian, litpic) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       uuid: store.state.uuid,
@@ -660,9 +698,17 @@ const api = {
   },
   //修改文章
   articleChange: (id, type_id, content, online, tuijian, litpic) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       type_id: type_id,
@@ -681,9 +727,17 @@ const api = {
   },
   //文章上线、下线
   articleOnlineChange: (id, online) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       online: online
@@ -698,9 +752,17 @@ const api = {
   },
   //删除文章
   deletearticle: (...id) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let where = [];
     for (let i = 0; i < id.length; i++) {
@@ -755,9 +817,17 @@ const api = {
   },
   //创建评论
   createComment: (tid, content,  rid, r_name) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
 
     function createMyComment() {
@@ -847,9 +917,17 @@ const api = {
   },
   //删除评论
   deleteComment: (tid, id) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
 
     function deleteComments() {
@@ -908,9 +986,17 @@ const api = {
   },
   //创建意见反馈
   createFeedback: (content, r_name, litpic) => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
     let data = {
       uid: store.state.uuid,
@@ -960,9 +1046,17 @@ const api = {
   },
   //点赞
   createPraise: articleId => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
 
     function changePraise() {
@@ -1013,9 +1107,17 @@ const api = {
   },
   //取消赞
   deletePraise: articleId => {
-    let check = checkLogin;
+    let check = checkLogin();
     if (!check) {
-      return Promise.reject("请登录后再操作")
+      return new Promise((resolve) =>{
+        let data = {
+          ret: 401,
+          data:{
+            err_msg: "用户未登录!"
+          }
+        }
+        resolve(data)
+      })
     }
 
     function deletePraise() {

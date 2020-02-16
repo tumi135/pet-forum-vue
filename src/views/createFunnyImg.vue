@@ -102,7 +102,12 @@ export default {
         this.formRules.litpic = '';
         file.status = 'done';
         file.message = '';
-      } else {
+      }else if(myImg.ret == 401){
+        this.$toast.fail(myImg.data.err_msg)
+        file.status = 'failed';
+        file.message = '上传失败';
+        file.url = '';
+      }  else {
         file.status = 'failed';
         file.message = '上传失败';
       }
@@ -147,7 +152,9 @@ export default {
         };
         this.picList = [];
         this.typeName = '';
-      } else {
+      }else if(data.ret == 401){
+        this.$toast.fail(data.data.err_msg)
+      }  else {
         this.$toast.fail(`发布失败！`);
       }
     }

@@ -63,7 +63,6 @@ export default {
     ...mapMutations(['saveUserInfo']),
     //获取用户个人信息
     async initUserInfo() {
-      console.log("aaaa")
       let userInfo = this.userInfo;
       if (!userInfo.username) {
         let data = await this.$api.userProfile();

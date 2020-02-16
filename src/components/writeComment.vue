@@ -21,54 +21,56 @@
 </template>
 
 <script>
-import { Overlay, Field, Button } from 'vant';
+import { Overlay, Field, Button } from "vant";
 export default {
-  name: '',
-  props: ['commentShow', 'replyTid', 'replyRname', 'replyRid','replyName'],
+  name: "",
+  props: ["commentShow", "replyTid", "replyRname", "replyRid", "replyName"],
   data() {
     return {
-      message: '',
+      message: ""
     };
   },
   methods: {
     closeOverlay() {
-      this.$emit('update:commentShow', false);
+      this.$emit("update:commentShow", false);
     },
     async sendComment() {
       var reg = /^\s*$/g;
       var test = reg.test(this.message);
       var message = this.message;
-      if(this.replyName){
-        message = '回复 @' + this.replyName + ': ' + message
+      if (this.replyName) {
+        message = "回复 @" + this.replyName + ": " + message;
       }
-      
+
       if (!test) {
         this.$toast.loading({
-        duration: 0, // 持续展示 toast
-        forbidClick: true,
-        message: '发送中...'
-      });
-          let data = await this.$api
-            .createComment(
-              this.replyTid,
-              message,
-              this.replyRid || null,
-              this.replyRname || null
-            )
-            .catch(err => {
-              console.log(err);
-              return '获取失败';
-            });
-            this.$toast.clear()
-          if (data == 'success') {
-            this.message = '';
-            this.$toast.success('发布成功');
-            this.$emit('update:commentShow', false);
-          } else {
-            this.$toast.fail('发布出错');
-          }
+          duration: 0, // 持续展示 toast
+          forbidClick: true,
+          message: "发送中..."
+        });
+        let data = await this.$api
+          .createComment(
+            this.replyTid,
+            message,
+            this.replyRid || null,
+            this.replyRname || null
+          )
+          .catch(err => {
+            console.log(err);
+            return "获取失败";
+          });
+        this.$toast.clear();
+        if (data == "success") {
+          this.message = "";
+          this.$toast.success("发布成功");
+          this.$emit("update:commentShow", false);
+        }else if(data.ret == 401){
+        this.$toast.fail(data.data.err_msg)
+      }  else {
+          this.$toast.fail("发布出错");
+        }
       } else {
-        this.$toast('请填写评论内容！');
+        this.$toast("请填写评论内容！");
       }
     }
   },
@@ -78,9 +80,9 @@ export default {
     // }
   },
   components: {
-    'van-overlay': Overlay,
-    'van-field': Field,
-    'van-button': Button
+    "van-overlay": Overlay,
+    "van-field": Field,
+    "van-button": Button
   }
 };
 </script>

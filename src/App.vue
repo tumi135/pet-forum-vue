@@ -12,7 +12,6 @@
 export default {
   name: 'App',
   async created() {
-    console.log('app')
     let checkLogin = await this.$api.userProfile();
     if (checkLogin.ret == 200 && checkLogin.data.err_code == 0) {
       this.$store.commit('saveUserInfo', checkLogin.data.info);

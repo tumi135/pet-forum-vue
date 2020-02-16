@@ -45,12 +45,12 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
-import { Grid, GridItem, Image, ImagePreview, Button, Dialog } from "vant"; //, ImagePreview, Button
-import { changePraise } from "../mixins/changePraise";
+import { mapMutations } from 'vuex';
+import { Grid, GridItem, Image, ImagePreview, Button, Dialog } from 'vant'; //, ImagePreview, Button
+import { changePraise } from '../mixins/changePraise';
 
 export default {
-  props: ["articleItem", "itemIndex", "articleType", "commentShow"],
+  props: ['articleItem', 'itemIndex', 'articleType', 'commentShow'],
   mixins: [changePraise],
   data() {
     return {
@@ -62,7 +62,7 @@ export default {
     this.piclist();
   },
   methods: {
-    ...mapMutations(["saveClickArticle"]),
+    ...mapMutations(['saveClickArticle']),
     toImg(index) {
       let myPic = this.pic.map(item => {
         return item.url;
@@ -90,26 +90,26 @@ export default {
       }
     },
     toArticleItem(type) {
-      if (this.type == "article") {
-        this.$emit("update:commentShow", true);
+      if (this.type == 'article') {
+        this.$emit('update:commentShow', true);
         return;
       }
       this.saveClickArticle(this.articleItem);
-      if (type == "comment") {
+      if (type == 'comment') {
         this.$router.push({
-          name: "article",
-          query: { article_id: this.articleItem.id, comment: "true" }
+          name: 'article',
+          query: { article_id: this.articleItem.id, comment: 'true' }
         });
       } else {
         this.$router.push({
-          name: "article",
+          name: 'article',
           query: { article_id: this.articleItem.id }
         });
       }
     },
     changePraiseStyle(val) {
-      if (val === "success") {
-        this.$emit("changePriceSon", !this.articleItem.praise, this.itemIndex);
+      if (val === 'success') {
+        this.$emit('changePriceSon', !this.articleItem.praise, this.itemIndex);
       }
     },
     //删除选中的
@@ -117,18 +117,21 @@ export default {
       let that = this;
       this.choseId = deleteId;
       Dialog.confirm({
-        title: "确定删除该趣图？"
+        title: '确定删除该趣图？'
       })
         .then(async () => {
           let deletearticle = await this.$api
             .deletearticle(deleteId)
             .catch(err => {
               console.log(err);
-              that.$toast.fail("数据获取失败");
-              return "";
+              that.$toast.fail('数据获取失败');
+              return '';
             });
           if (deletearticle.ret == 200 && deletearticle.data.err_code == 0) {
             that.$router.go(0);
+          } else if (deletearticle.ret == 401) {
+            this.$toast.fail(deletearticle.data.err_msg);
+            this.choseId = 0;
           }
         })
         .catch(() => {
@@ -142,10 +145,10 @@ export default {
     }
   },
   components: {
-    "van-grid": Grid,
-    "van-grid-item": GridItem,
-    "van-image": Image,
-    "van-button": Button
+    'van-grid': Grid,
+    'van-grid-item': GridItem,
+    'van-image': Image,
+    'van-button': Button
   }
 };
 </script>
